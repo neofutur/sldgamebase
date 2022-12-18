@@ -172,6 +172,7 @@ event "remnant: postverta reveal"
 	unvisit Levana
 	unvisit Prosa
 	unvisit Statina
+	unvisit Vaticanus
 	link Postverta Diespiter
 	link Postverta Prosa
 	link Postverta Statina
@@ -316,23 +317,7 @@ event "remnant: cognizance peregrine"
 
 
 
-event "remnant: remove hidden"
-	system Diespiter
-		remove hidden
-	system Egeria
-		remove hidden
-	system Postverta
-		remove hidden
-	system Prosa
-		remove hidden
-	system Statina
-		remove hidden
-	system Vaticanus
-		remove hidden
-
-
-
-event "remnant: ssil vida area unvisited"
+event "remnant: ssil vida area unvisted"
 	unvisit "Diespiter"
 	unvisit "Egeria"
 	unvisit "Prosa"
@@ -341,22 +326,18 @@ event "remnant: ssil vida area unvisited"
 
 
 
-event "remnant: ssil vida activation"
-	set "remnant: ssil vida active"
-	planet Fertriery
-		attributes "requires: gaslining" uninhabited
-		landscape land/nasa8
-		description `You are not quite sure what Fetriery is. It lacks cohesive edges, and yet it has sufficient atmospheric pressure to threaten the hull integrity of ships not designed for high pressure environments. Despite such density, which would indicate a strong gravitational presence, your sensors are unable to find any kind of core.`
-		spaceport `Delving further into the clouds, it becomes obvious that the entire planet appears to be a mix of gases, aerosols, and suspended particles. Despite this, or perhaps because of it, void sprites appear to thrive in its depths, where they can be seen dancing among energy currents reminiscent of the ion storms.`
-		government "Ember Waste"
-		bribe 0
-		security 0
+# Patch event to reset the state of the Postverta cluster systems to the state as defined in map.txt at the time of writing. Only to be used if the old versions of the Ssil Vida activation and deactivation events were applied.
+# There are actually some differences to the initial map state:
+# Postverta is not hidden.
+# Postverta is linked to the neargy systems.
+# The "Wormhole Barren (Alpha|Beta)" are present.
+event "remnant: ssil vida reset patch"
 	system Caeculus
 		pos 162.87 343.242
 		government Uninhabited
 		attributes "ember waste"
-		arrival 625
-		habitable 320
+		arrival 5000
+		habitable 50000
 		belt 1797
 		haze _menu/haze-red
 		link Stercutus
@@ -381,6 +362,7 @@ event "remnant: ssil vida activation"
 		fleet "Korath Rescue" 60000
 		fleet "Small Remnant" 30000
 		fleet "Large Remnant" 30000
+		fleet Embershades 12000
 		hazard "Ember Waste Base Heat" 100
 		hazard "Ember Waste Base Storm" 9000
 		object
@@ -389,15 +371,15 @@ event "remnant: ssil vida activation"
 		object
 			sprite planet/dust6-b
 			distance 127.09
-			period 32.037
+			period 8.10479
 		object
 			sprite planet/desert9
 			distance 341.05
-			period 140.835
+			period 35.6288
 		object
 			sprite planet/gas5-b
 			distance 993.81
-			period 700.551
+			period 177.227
 			object
 				sprite planet/rock14-b
 				distance 258
@@ -409,11 +391,11 @@ event "remnant: ssil vida activation"
 		object
 			sprite planet/rock3
 			distance 1683.81
-			period 1544.99
+			period 390.854
 		object
 			sprite planet/jupiter-b
 			distance 2187.82
-			period 2288.24
+			period 578.885
 			object
 				sprite planet/rhea-b
 				distance 273
@@ -422,107 +404,100 @@ event "remnant: ssil vida activation"
 				sprite planet/ice0-b
 				distance 380
 				period 23.2775
-	system Egeria
-		pos 288 146
-		government Uninhabited
-		attributes "ember waste"
-		arrival 2030
-		belt 2000
-		habitable 1505.92
-		haze _menu/haze-red
-		"jump range" 50
-		link Statina
-		link Vaticanus
-		minables iron 20 4
-		minables lead 28 5
-		minables "plant" 80 5
-		minables "plant2" 80 5
-		minables "plant cluster" 80 5
-		minables "large plant" 40 3
-		minables "large plant2" 40 3
-		minables "large plant cluster" 40 3
-		minables "space flora" 80 5
-		minables "large space flora" 40 3
-		minables "live crystal" 60 3
-		fleet "Void Sprites (Ember Waste)" 400
-		fleet "Subsidurial (Ember Waste)" 2000
-		hazard "Ember Waste Base Heat" 50
-		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
-		object
-			sprite star/k5-old
-			distance 40
-			period 19
-			offset 180
-		object
-			sprite star/g0
-			distance 74
-			period 19
-		object
-			sprite planet/ice4
-			distance 248
-			period 61
-		object
-			sprite planet/gas9
-			distance 1326
-			period 2174
-			object
-				sprite planet/rhea
-				distance 270
-				period 16
+			object "Wormhole Barren Beta"
+				sprite planet/wormhole-red
+				distance 2400
+				period 391
 	system Diespiter
 		pos 332 210
 		government Uninhabited
 		attributes "ember waste"
 		arrival 950
-		belt 2000
-		habitable 534.375
+		habitable 950
+		belt 1500
 		haze _menu/haze-red
-		"jump range" 50
-		link Statina
 		link Postverta
+		link Statina
+		asteroids "small rock" 65 3
+		asteroids "medium rock" 14 1
+		asteroids "large rock" 3 1
+		asteroids "small metal" 74 2
+		asteroids "medium metal" 26 4
+		asteroids "large metal" 76 3
 		minables iron 22 3
 		minables silicon 46 3
 		minables tungsten 17 3
-		minables "plant" 80 5
-		minables "plant2" 80 5
-		minables "plant cluster" 80 5
-		minables "large plant" 40 3
-		minables "large plant2" 40 3
-		minables "large plant cluster" 40 3
-		minables "space flora" 80 5
-		minables "large space flora" 40 3
-		minables "live crystal" 60 3
-		fleet "Void Sprites (Ember Waste)" 400
-		fleet "Subsidurial (Ember Waste)" 2000
-		hazard "Ember Waste Base Heat" 50
+		hazard "Ember Waste Base Heat" 100
 		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
 		object
 			sprite star/k5-old
 			period 10
 		object
 			sprite planet/ice6
 			distance 745
-			period 394
+			period 263.895
 		object
 			sprite planet/lava0
 			distance 922
-			period 543
+			period 363.324
 		object
 			sprite planet/gas11
 			distance 1600
-			period 398
+			period 830.573
 			object
 				sprite planet/rock3
 				distance 270
 				period 14
+	system Egeria
+		pos 288 146
+		government Uninhabited
+		attributes "ember waste"
+		arrival 2030
+		habitable 2030
+		belt 1500
+		haze _menu/haze-red
+		link Statina
+		link Vaticanus
+		asteroids "small rock" 1 8
+		asteroids "medium rock" 20 5
+		asteroids "large rock" 9 7
+		asteroids "medium metal" 86 3
+		asteroids "large metal" 5 4
+		minables iron 20 4
+		minables lead 28 5
+		hazard "Ember Waste Base Heat" 100
+		hazard "Ember Waste Base Storm" 9000
+		object
+			sprite star/k5-old
+			distance 58.687
+			period 10.2856
+			offset 180
+		object
+			sprite star/g0
+			distance 51.6228
+			period 10.2856
+		object
+			sprite planet/ice4
+			distance 248
+			period 34.6728
+		object
+			sprite planet/gas9
+			distance 1326
+			period 428.674
+			object
+				sprite planet/rhea
+				distance 270
+				period 16
+		object "Wormhole Barren Alpha"
+			sprite planet/wormhole-red
+			distance 2313
+			period 389
 	system Levana
 		pos 203.504 247.389
 		government Uninhabited
 		attributes "ember waste"
 		arrival 5000
-		habitable 2798.68
+		habitable 8325
 		belt 1202
 		haze _menu/haze-red
 		link Coluber
@@ -549,33 +524,37 @@ event "remnant: ssil vida activation"
 		hazard "Ember Waste Base Storm" 9000
 		object
 			sprite star/a-giant
-			distance 17.197
-			period 9.08241
+			distance 5.42796
+			period 7.17345
 			offset 180
 		object
 			sprite star/k5
-			distance 95.803
-			period 9.08241
+			distance 153.26
+			period 7.17345
 		object
 			sprite planet/dust1-b
 			distance 215.093
-			period 23.8519
+			period 13.8295
 		object
 			sprite planet/venus
 			distance 438.933
-			period 69.5314
+			period 40.3148
 		object
 			sprite planet/desert1
 			distance 665.023
-			period 129.67
+			period 75.1835
 		object
 			sprite planet/cloud1
 			distance 922.583
-			period 211.881
+			period 122.850
+		object "Wormhole Barren Alpha"
+			sprite planet/wormhole-red
+			distance 2313
+			period 389
 		object
 			sprite planet/neptune-b
 			distance 3359.19
-			period 1472.09
+			period 853.531
 			object
 				sprite planet/rock17-b
 				distance 213
@@ -590,41 +569,32 @@ event "remnant: ssil vida activation"
 				period 38.521
 	system Postverta
 		pos 297 269
-		government Remnant
+		government Uninhabited
 		attributes "ember waste"
 		arrival 500
-		belt 2000
 		habitable 135
-		haze _menu/haze-red
-		"jump range" 50
+		belt 1500
 		link Diespiter
 		link Prosa
 		link Statina
-		minables "plant" 80 5
-		minables "plant2" 80 5
-		minables "plant cluster" 80 5
-		minables "large plant" 40 3
-		minables "large plant2" 40 3
-		minables "large plant cluster" 40 3
-		minables "space flora" 80 5
-		minables "large space flora" 40 3
-		minables "live crystal" 60 3
-		fleet "Void Sprites (Ember Waste)" 400
-		fleet "Subsidurial (Ember Waste)" 2000
-		hazard "Ember Waste Base Heat" 50
+		haze _menu/haze-red
+		asteroids "medium rock" 4 2
+		asteroids "large rock" 4 3
+		asteroids "medium metal" 52 1
+		asteroids "large metal" 9 3
+		hazard "Ember Waste Base Heat" 100
 		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
 		object
 			sprite star/m8
-			period 19
+			period 10
 		object
 			sprite planet/desert7
 			distance 439
-			period 143
+			period 316.657
 		object Fertriery
-			sprite planet/nebula1
+			sprite planet/fog0
 			distance 814
-			period 362
+			period 799.520
 			object
 				sprite planet/dust4
 				distance 202
@@ -632,58 +602,49 @@ event "remnant: ssil vida activation"
 		object
 			sprite planet/rock10
 			distance 1208
-			period 654
+			period 1445.41
 		object "Ssil Vida"
 			sprite planet/sheragi_postverta
 				scale 0.5
 			distance 1408
-			period 554
+			period 1818.85
 	system Prosa
 		pos 303 194
 		government Uninhabited
 		attributes "ember waste"
 		arrival 5000
-		habitable 2372.76
-		belt 2000
+		habitable 22300
+		belt 1500
 		haze _menu/haze-red
-		"jump range" 50
 		link Vaticanus
-		link Postverta
+		asteroids "medium metal" 11 2
+		asteroids "large metal" 2 2
+		asteroids "small rock" 4 1
+		asteroids "medium rock" 16 1
+		asteroids "large rock" 16 1
 		minables copper 5 2
-		minables "plant" 80 5
-		minables "plant2" 80 5
-		minables "plant cluster" 80 5
-		minables "large plant" 40 3
-		minables "large plant2" 40 3
-		minables "large plant cluster" 40 3
-		minables "space flora" 80 5
-		minables "large space flora" 40 3
-		minables "live crystal" 60 3
-		fleet "Void Sprites (Ember Waste)" 400
-		fleet "Subsidurial (Ember Waste)" 2000
-		hazard "Ember Waste Base Heat" 50
+		hazard "Ember Waste Base Heat" 100
 		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
 		object
 			sprite star/o-giant
-			period 7
+			period 10
 			offset 180
 		object
 			sprite planet/cloud1
 			distance 443.879
-			period 76.7945
+			period 25.0498
 		object
 			sprite planet/desert9
 			distance 881.879
-			period 215.054
+			period 70.1489
 		object
 			sprite planet/rock6
 			distance 1073.88
-			period 288.979
+			period 94.2629
 		object
 			sprite planet/gas17
 			distance 1443.88
-			period 450.536
+			period 146.961
 			object
 				sprite planet/callisto
 				distance 227
@@ -692,54 +653,48 @@ event "remnant: ssil vida activation"
 				sprite planet/dust5
 				distance 351
 				period 28
+		object "Wormhole Barren Beta"
+				sprite planet/wormhole-red
+				distance 2313
+				period 389
 	system Statina
 		pos 385 198
 		government Uninhabited
 		attributes "ember waste" "wormhole"
 		arrival 500
-		belt 2000
 		habitable 135
+		belt 1500
 		haze _menu/haze-red
-		"jump range" 50
 		link Diespiter
 		link Egeria
-		link Postverta
+		asteroids "large rock" 1 4
+		asteroids "small metal" 39 3
+		asteroids "medium metal" 72 3
+		asteroids "large metal" 3 5
 		minables iron 5 6
 		minables silicon 11 5
 		minables titanium 10 4
-		minables "plant" 80 5
-		minables "plant2" 80 5
-		minables "plant cluster" 80 5
-		minables "large plant" 40 3
-		minables "large plant2" 40 3
-		minables "large plant cluster" 40 3
-		minables "space flora" 80 5
-		minables "large space flora" 40 3
-		minables "live crystal" 60 3
-		fleet "Void Sprites (Ember Waste)" 400
-		fleet "Subsidurial (Ember Waste)" 2000
-		hazard "Ember Waste Base Heat" 50
+		hazard "Ember Waste Base Heat" 100
 		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
 		object
 			sprite star/m8
 			period 10
 		object
 			sprite planet/desert4
 			distance 111
-			period 30
+			period 40.2603
 		object
 			sprite planet/dust3
 			distance 308
-			period 142
+			period 186.088
 		object
 			sprite planet/gas8
 			distance 636
-			period 420
+			period 552.177
 		object
 			sprite planet/ice5
 			distance 1364
-			period 84
+			period 1734.26
 			object
 				sprite planet/dust4
 				distance 158
@@ -747,49 +702,42 @@ event "remnant: ssil vida activation"
 		object "Wormhole Link"
 			sprite planet/wormhole-red
 			distance 2754
-			period 389
+			period 4975.52
 	system Vaticanus
 		pos 324 112
 		government Uninhabited
-		attributes "ember waste"
+		attributes "ember waste" "wormhole"
 		arrival 500
-		belt 2000
 		habitable 320
+		belt 1500
 		haze _menu/haze-red
-		"jump range" 50
 		link Egeria
 		link Prosa
+		asteroids "small rock" 3 6
+		asteroids "medium rock" 11 9
+		asteroids "large rock" 5 8
+		asteroids "small metal" 14 8
+		asteroids "medium metal" 47 11
+		asteroids "large metal" 11 7
 		minables lead 16 13
 		minables tungsten 10 13
-		minables "plant" 80 5
-		minables "plant2" 80 5
-		minables "plant cluster" 80 5
-		minables "large plant" 40 3
-		minables "large plant2" 40 3
-		minables "large plant cluster" 40 3
-		minables "space flora" 80 5
-		minables "large space flora" 40 3
-		minables "live crystal" 60 3
-		fleet "Void Sprites (Ember Waste)" 400
-		fleet "Subsidurial (Ember Waste)" 2000
-		hazard "Ember Waste Base Heat" 50
+		hazard "Ember Waste Base Heat" 100
 		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
 		object
 			sprite star/m0
-			period 19
+			period 10
 		object
 			sprite planet/ice6
 			distance 261
-			period 73
+			period 94.2856
 		object
 			sprite planet/tethys
 			distance 768
-			period 368
+			period 475.912
 		object
 			sprite planet/gas16
 			distance 1670
-			period 1181
+			period 1526.01
 			object
 				sprite planet/lava1
 				distance 204
@@ -797,7 +745,7 @@ event "remnant: ssil vida activation"
 		object
 			sprite planet/uranus
 			distance 2105
-			period 3438
+			period 2159.54
 			object
 				sprite planet/luna
 				distance 235
@@ -805,7 +753,34 @@ event "remnant: ssil vida activation"
 		object "Wormhole Link"
 			sprite planet/wormhole-red
 			distance 2754
-			period 389
+			period 3231.69
+	
+# Permanent changes made when Ssil Vida is first activated and not undone by subsequent activations and deactivations.
+event "remnant: ssil vida initial activation"
+	system Diespiter
+		remove hazard "Ember Waste Base Heat" 100
+		add hazard "Ember Waste Base Heat" 50
+		add hazard "Ember Waste Base Storm" 15000
+	system Egeria
+		remove hazard "Ember Waste Base Heat" 100
+		add hazard "Ember Waste Base Heat" 50
+		add hazard "Ember Waste Base Storm" 15000
+	system Postverta
+		remove hazard "Ember Waste Base Heat" 100
+		add hazard "Ember Waste Base Heat" 50
+		add hazard "Ember Waste Base Storm" 15000
+	system Prosa
+		remove hazard "Ember Waste Base Heat" 100
+		add hazard "Ember Waste Base Heat" 50
+		add hazard "Ember Waste Base Storm" 15000
+	system Statina
+		remove hazard "Ember Waste Base Heat" 100
+		add hazard "Ember Waste Base Heat" 50
+		add hazard "Ember Waste Base Storm" 15000
+	system Vaticanus
+		remove hazard "Ember Waste Base Heat" 100
+		add hazard "Ember Waste Base Heat" 50
+		add hazard "Ember Waste Base Storm" 15000
 
 
 
@@ -818,70 +793,144 @@ event "remnant: ssil vida deactivation"
 	planet Fertriery
 		attributes "requires: gaslining" uninhabited
 		landscape land/nasa8
+		description `You are not quite sure what Fetriery is. It lacks cohesive edges, and yet it has sufficient atmospheric pressure to threaten the hull integrity of ships not designed for high pressure environments. Despite such density, which would indicate a strong gravitational presence, your sensors are unable to find any kind of core.`
+		spaceport `Delving further into the clouds, it becomes obvious that the entire planet appears to be a mix of gases, aerosols, and suspended particles. Despite this, or perhaps because of it, void sprites appear to thrive in its depths, where they can be seen dancing among energy currents reminiscent of the ion storms.`
+		government "Ember Waste"
+		bribe 0
+		security 0
+	system Caeculus
+		remove object "Wormhole Barren Alpha"
+			sprite planet/wormhole-red
+			distance 2313
+			period 389
+	system Diespiter
+		"jump range" 50
+		minables iron 22 3
+		minables silicon 46 3
+		minables tungsten 17 3
+		minables "plant" 80 5
+		minables "plant2" 80 5
+		minables "plant cluster" 80 5
+		minables "large plant" 40 3
+		minables "large plant2" 40 3
+		minables "large plant cluster" 40 3
+		minables "space flora" 80 5
+		minables "large space flora" 40 3
+		minables "live crystal" 60 3
+		fleet "Void Sprites (Ember Waste)" 400
+		fleet "Subsidurial (Ember Waste)" 2000
+	system Egeria
+		minables iron 20 4
+		minables lead 28 5
+		minables "plant" 80 5
+		minables "plant2" 80 5
+		minables "plant cluster" 80 5
+		minables "large plant" 40 3
+		minables "large plant2" 40 3
+		minables "large plant cluster" 40 3
+		minables "space flora" 80 5
+		minables "large space flora" 40 3
+		minables "live crystal" 60 3
+		fleet "Void Sprites (Ember Waste)" 400
+		fleet "Subsidurial (Ember Waste)" 2000
+		remove object "Wormhole Barren Alpha"
+			sprite planet/wormhole-red
+			distance 2313
+			period 389
+	system Levana
+		remove object "Wormhole Barren Alpha"
+			sprite planet/wormhole-red
+			distance 2313
+			period 389
+	system Postverta
+		minables "plant" 80 5
+		minables "plant2" 80 5
+		minables "plant cluster" 80 5
+		minables "large plant" 40 3
+		minables "large plant2" 40 3
+		minables "large plant cluster" 40 3
+		minables "space flora" 80 5
+		minables "large space flora" 40 3
+		minables "live crystal" 60 3
+		fleet "Void Sprites (Ember Waste)" 400
+		fleet "Subsidurial (Ember Waste)" 2000
+		remove object Fertriery
+			sprite planet/fog0
+			distance 814
+			period 799.520
+		add object Fertriery
+			sprite planet/nebula1
+			distance 814
+			period 362
+			object
+				sprite planet/dust4
+				distance 202
+				period 21
+	system Prosa
+		minables copper 5 2
+		minables "plant" 80 5
+		minables "plant2" 80 5
+		minables "plant cluster" 80 5
+		minables "large plant" 40 3
+		minables "large plant2" 40 3
+		minables "large plant cluster" 40 3
+		minables "space flora" 80 5
+		minables "large space flora" 40 3
+		minables "live crystal" 60 3
+		fleet "Void Sprites (Ember Waste)" 400
+		fleet "Subsidurial (Ember Waste)" 2000
+		remove object "Wormhole Barren Beta"
+			sprite planet/wormhole-red
+			distance 2313
+			period 389
+	system Statina
+		minables iron 5 6
+		minables silicon 11 5
+		minables titanium 10 4
+		minables "plant" 80 5
+		minables "plant2" 80 5
+		minables "plant cluster" 80 5
+		minables "large plant" 40 3
+		minables "large plant2" 40 3
+		minables "large plant cluster" 40 3
+		minables "space flora" 80 5
+		minables "large space flora" 40 3
+		minables "live crystal" 60 3
+		fleet "Void Sprites (Ember Waste)" 400
+		fleet "Subsidurial (Ember Waste)" 2000
+	system Vaticanus
+		minables lead 16 13
+		minables tungsten 10 13
+		minables "plant" 80 5
+		minables "plant2" 80 5
+		minables "plant cluster" 80 5
+		minables "large plant" 40 3
+		minables "large plant2" 40 3
+		minables "large plant cluster" 40 3
+		minables "space flora" 80 5
+		minables "large space flora" 40 3
+		minables "live crystal" 60 3
+		fleet "Void Sprites (Ember Waste)" 400
+		fleet "Subsidurial (Ember Waste)" 2000
+
+
+
+event "remnant: ssil vida deactivation patched"
+	clear "remnant: ssil vida patched active"
+	planet Fertriery
+		attributes "requires: gaslining" uninhabited
+		landscape land/nasa8
 		description `Fertriery is a fairly typical world with a particularly dense atmosphere that includes significant levels of chlorine and fluorine. The only unusual factor is the above-average temperatures, likely due to the decreased energy loss into the surrounding space.`
 		remove spaceport
 		government Uninhabited
 		bribe 0
 		security 0
-	system Egeria
-		pos 288 146
-		government Uninhabited
-		attributes "ember waste"
-		arrival 2030
-		belt 2000
-		habitable 1505.92
-		haze _menu/haze-red
-		"jump range" 0
-		link Statina
-		link Vaticanus
-		asteroids "small rock" 1 8
-		asteroids "medium rock" 20 5
-		asteroids "large rock" 9 7
-		asteroids "medium metal" 86 3
-		asteroids "large metal" 5 4
-		minables iron 20 4
-		minables lead 28 5
-		remove fleet "Void Sprites (Ember Waste)"
-		remove fleet "Subsidurial (Ember Waste)"
-		hazard "Ember Waste Base Heat" 50
-		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
-		object
-			sprite star/k5-old
-			distance 40
-			period 19
-			offset 180
-		object
-			sprite star/g0
-			distance 74
-			period 19
-		object
-			sprite planet/ice4
-			distance 248
-			period 61
-		object
-			sprite planet/gas9
-			distance 1326
-			period 2174
-			object
-				sprite planet/rhea
-				distance 270
-				period 16
-		object "Wormhole Barren Alpha"
+	system Caeculus
+		add object "Wormhole Barren Beta"
 			sprite planet/wormhole-red
-			distance 2313
-			period 389
+			distance 2400
+			period 391
 	system Diespiter
-		pos 332 210
-		government Uninhabited
-		attributes "ember waste"
-		arrival 950
-		belt 2000
-		habitable 534.375
-		haze _menu/haze-red
-		"jump range" 0
-		link Statina
-		link Postverta
 		asteroids "small rock" 65 3
 		asteroids "medium rock" 14 1
 		asteroids "large rock" 3 1
@@ -890,70 +939,37 @@ event "remnant: ssil vida deactivation"
 		asteroids "large metal" 76 3
 		minables iron 22 3
 		minables silicon 46 3
-		remove fleet "Void Sprites (Ember Waste)"
-		remove fleet "Subsidurial (Ember Waste)"
 		minables tungsten 17 3
-		hazard "Ember Waste Base Heat" 50
-		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
-		object
-			sprite star/k5-old
-			period 10
-		object
-			sprite planet/ice6
-			distance 745
-			period 394
-		object
-			sprite planet/lava0
-			distance 922
-			period 543
-		object
-			sprite planet/gas11
-			distance 1600
-			period 398
-			object
-				sprite planet/rock3
-				distance 270
-				period 14
+		remove fleet
+	system Egeria
+		asteroids "small rock" 1 8
+		asteroids "medium rock" 20 5
+		asteroids "large rock" 9 7
+		asteroids "medium metal" 86 3
+		asteroids "large metal" 5 4
+		minables iron 20 4
+		minables lead 28 5
+		remove fleet
+		add object "Wormhole Barren Alpha"
+			sprite planet/wormhole-red
+			distance 2313
+			period 389
 	system Levana
 		add object "Wormhole Barren Alpha"
 			sprite planet/wormhole-red
 			distance 2313
 			period 389
-	system Caeculus
-		add object "Wormhole Barren Beta"
-			sprite planet/wormhole-red
-			distance 2400
-			period 391
 	system Postverta
-		pos 297 269
-		government Remnant
-		attributes "ember waste"
-		arrival 500
-		belt 2000
-		habitable 135
-		haze _menu/haze-red
-		"jump range" 0
-		link Diespiter
-		link Prosa
-		link Statina
 		asteroids "medium rock" 4 2
 		asteroids "large rock" 4 3
 		asteroids "medium metal" 52 1
 		asteroids "large metal" 9 3
-		remove fleet "Void Sprites (Ember Waste)"
-		remove fleet "Subsidurial (Ember Waste)"
-		hazard "Ember Waste Base Heat" 50
-		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
-		object
-			sprite star/m8
-			period 19
-		object
-			sprite planet/desert7
-			distance 439
-			period 143
-		object Fertriery
+		remove fleet
+		remove object Fertriery
+			sprite planet/nebula1
+			distance 814
+			period 362
+		add object Fertriery
 			sprite planet/fog0
 			distance 814
 			period 362
@@ -961,81 +977,7 @@ event "remnant: ssil vida deactivation"
 				sprite planet/dust4
 				distance 202
 				period 21
-		object
-			sprite planet/rock10
-			distance 1208
-			period 654
-		object "Ssil Vida"
-			sprite planet/sheragi_postverta
-				scale 0.5
-			distance 1408
-			period 554
 	system Prosa
-		pos 303 194
-		government Uninhabited
-		attributes "ember waste"
-		arrival 5000
-		habitable 2372.76
-		belt 2000
-		haze _menu/haze-red
-		"jump range" 0
-		link Vaticanus
-		link Postverta
-		asteroids "medium metal" 11 2
-		asteroids "large metal" 2 2
-		asteroids "small rock" 4 1
-		asteroids "medium rock" 16 1
-		asteroids "large rock" 16 1
-		minables copper 5 2
-		remove fleet "Void Sprites (Ember Waste)"
-		remove fleet "Subsidurial (Ember Waste)"
-		hazard "Ember Waste Base Heat" 50
-		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
-		object
-			sprite star/o-giant
-			period 7
-			offset 180
-		object
-			sprite planet/cloud1
-			distance 443.879
-			period 76.7945
-		object
-			sprite planet/desert9
-			distance 881.879
-			period 215.054
-		object
-			sprite planet/rock6
-			distance 1073.88
-			period 288.979
-		object
-			sprite planet/gas17
-			distance 1443.88
-			period 450.536
-			object
-				sprite planet/callisto
-				distance 227
-				period 14
-			object
-				sprite planet/dust5
-				distance 351
-				period 28
-		object "Wormhole Barren Beta"
-			sprite planet/wormhole-red
-			distance 2313
-			period 389
-	system Statina
-		pos 385 198
-		government Uninhabited
-		attributes "ember waste" "wormhole"
-		arrival 500
-		belt 2000
-		habitable 135
-		haze _menu/haze-red
-		"jump range" 0
-		link Diespiter
-		link Egeria
-		link Postverta
 		asteroids "large rock" 1 4
 		asteroids "small metal" 39 3
 		asteroids "medium metal" 72 3
@@ -1043,49 +985,8 @@ event "remnant: ssil vida deactivation"
 		minables iron 5 6
 		minables silicon 11 5
 		minables titanium 10 4
-		remove fleet "Void Sprites (Ember Waste)"
-		remove fleet "Subsidurial (Ember Waste)"
-		hazard "Ember Waste Base Heat" 50
-		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
-		object
-			sprite star/m8
-			period 10
-		object
-			sprite planet/desert4
-			distance 111
-			period 30
-		object
-			sprite planet/dust3
-			distance 308
-			period 142
-		object
-			sprite planet/gas8
-			distance 636
-			period 420
-		object
-			sprite planet/ice5
-			distance 1364
-			period 84
-			object
-				sprite planet/dust4
-				distance 158
-				period 17
-		object "Wormhole Link"
-			sprite planet/wormhole-red
-			distance 2754
-			period 389
+		remove fleet
 	system Vaticanus
-		pos 324 112
-		government Uninhabited
-		attributes "ember waste"
-		arrival 500
-		belt 2000
-		habitable 320
-		haze _menu/haze-red
-		"jump range" 0
-		link Egeria
-		link Prosa
 		asteroids "small rock" 3 6
 		asteroids "medium rock" 11 9
 		asteroids "large rock" 5 8
@@ -1094,42 +995,16 @@ event "remnant: ssil vida deactivation"
 		asteroids "large metal" 11 7
 		minables lead 16 13
 		minables tungsten 10 13
-		remove fleet "Void Sprites (Ember Waste)"
-		remove fleet "Subsidurial (Ember Waste)"
-		hazard "Ember Waste Base Heat" 50
-		hazard "Ember Waste Base Storm" 9000
-		hazard "Ember Waste Base Storm" 15000
-		object
-			sprite star/m0
-			period 19
-		object
-			sprite planet/ice6
-			distance 261
-			period 73
-		object
-			sprite planet/tethys
-			distance 768
-			period 368
-		object
-			sprite planet/gas16
-			distance 1670
-			period 1181
-			object
-				sprite planet/lava1
-				distance 204
-				period 14
-		object
-			sprite planet/uranus
-			distance 2105
-			period 3438
-			object
-				sprite planet/luna
-				distance 235
-				period 14
-		object "Wormhole Link"
-			sprite planet/wormhole-red
-			distance 2754
-			period 389
+		remove fleet
+
+
+
+# The following event names are preserved here in case a person has already had a mission using them written to their savefile but has not had the event applied, in which case the event will not be serialised and will result in an error if it is not defined. The events are empty; the patch will automatically be applied and the new versions of the jobs, referencing the new events will become available on next landing.
+event "remnant: ssil vida activation"
+
+
+
+event "remnant: ssil vida deactivation"
 
 
 

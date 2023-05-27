@@ -570,8 +570,11 @@ government "Hai (Friendly Unfettered)"
 		"Korath" -.01
 		"Hai" .01
 		"Hai (Wormhole Access)" .01
-		"Hai (Unfettered)" 1
 		"Elenctic Commune" .01
+		"Wanderer" -.01
+
+		"Hai (Unfettered)" .01
+		"Hai (Unfettered Civilians)" .01
 	"bribe" .02
 	"fine" 0
 	"friendly hail" "friendly unfettered"
@@ -587,6 +590,7 @@ government "Hai (Unfettered Civilians)"
 	"player reputation" 10
 	"attitude toward"
 		"Hai (Unfettered)" .01
+		"Hai (Friendly Unfettered)" .01
 	"bribe" .02
 	"fine" 0
 	"friendly hail" "friendly unfettered"

@@ -41,6 +41,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Politics.h"
 #include "Preferences.h"
 #include "RingShader.h"
+#include "RoutePlan.h"
 #include "Screen.h"
 #include "Ship.h"
 #include "ShipJumpNavigation.h"
@@ -340,7 +341,7 @@ void MapPanel::FinishDrawing(const string &buttonCondition)
 
 	// Draw a warning if the selected system is not routable.
 
-	if(selectedSystem != &playerSystem && !distance.HasRoute(selectedSystem))
+	if(selectedSystem != &playerSystem && !distance.HasRoute(*selectedSystem))
 	{
 		static const string UNAVAILABLE = "You have no available route to this system.";
 		static const string UNKNOWN = "You have not yet mapped a route to this system.";
@@ -727,30 +728,23 @@ void MapPanel::Select(const System *system)
 	}
 	else if(shift)
 	{
-		DistanceMap localDistance(player, plan.front());
-		if(localDistance.Days(system) <= 0)
+		const System *planEnd = plan.front();
+		if(system == planEnd)
 			return;
 
-		auto it = plan.begin();
-		while(system != *it)
-		{
-			it = ++plan.insert(it, system);
-			system = localDistance.Route(system);
-		}
+		RoutePlan addedRoute(player, *planEnd, *system);
+		if(!addedRoute.HasRoute())
+			return;
+
+		vector<const System *> newPlan = addedRoute.Plan();
+		plan.insert(plan.begin(), newPlan.begin(), newPlan.end());
 	}
-	else if(distance.Days(system) > 0)
+	else if(distance.HasRoute(*system))
 	{
-		plan.clear();
 		if(!isJumping)
 			flagship->SetTargetSystem(nullptr);
 
-		while(system != source)
-		{
-			plan.push_back(system);
-			system = distance.Route(system);
-		}
-		if(isJumping)
-			plan.push_back(source);
+		plan = distance.Plan(*system);
 	}
 }
 

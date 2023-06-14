@@ -258,6 +258,10 @@ target_sources(EndlessSkyLib PRIVATE
 	Rectangle.h
 	RingShader.cpp
 	RingShader.h
+	RouteEdge.cpp
+	RouteEdge.h
+	RoutePlan.cpp
+	RoutePlan.h
 	Sale.h
 	SavedGame.cpp
 	SavedGame.h

@@ -4096,6 +4096,8 @@ void AI::MovePlayer(Ship &ship, const PlayerInfo &player, Command &activeCommand
 		if(activeCommands.Has(Command::PRIMARY))
 		{
 			int index = 0;
+			// Used for animating when the players flagship "wants to fire"
+			command |= Command::PRIMARY;
 			for(const Hardpoint &hardpoint : ship.Weapons())
 			{
 				if(hardpoint.IsReady() && !hardpoint.GetOutfit()->Icon())
@@ -4103,6 +4105,7 @@ void AI::MovePlayer(Ship &ship, const PlayerInfo &player, Command &activeCommand
 				++index;
 			}
 		}
+
 		if(activeCommands.Has(Command::SECONDARY))
 		{
 			int index = 0;

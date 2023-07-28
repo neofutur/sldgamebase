@@ -142,7 +142,7 @@ void MainPanel::Step()
 	}
 
 	engine.Step(isActive);
-	
+
 	if(isActive)
 		player.StepMissionTimers(GetUI());
 

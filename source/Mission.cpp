@@ -1139,6 +1139,7 @@ void Mission::UpdateNPCs(const PlayerInfo &player)
 }
 
 
+
 // Get a list of Timers associated with this mission.
 list<Timer> &Mission::Timers()
 {

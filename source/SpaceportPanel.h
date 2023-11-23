@@ -16,7 +16,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #ifndef SPACEPORT_PANEL_H_
 #define SPACEPORT_PANEL_H_
 
-#include "Panel.h"
+#include "LandedOfferPanel.h"
 
 #include "Information.h"
 #include "text/WrappedText.h"
@@ -30,14 +30,13 @@ class Interface;
 // GUI panel to be shown when you are in a spaceport. This just draws the port
 // description, but can also pop up conversation panels or dialogs offering
 // missions that are marked as originating in the spaceport.
-class SpaceportPanel : public Panel {
+class SpaceportPanel : public LandedOfferPanel {
 public:
 	explicit SpaceportPanel(PlayerInfo &player);
 
 	void UpdateNews();
-
-	virtual void Step() override;
 	virtual void Draw() override;
+	virtual const Port *GetPort() const override;
 
 
 private:
@@ -45,7 +44,6 @@ private:
 
 
 private:
-	PlayerInfo &player;
 	WrappedText text;
 	const Port &port;
 	const Interface &ui;

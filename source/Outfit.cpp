@@ -204,101 +204,265 @@ void Outfit::Load(const DataNode &node)
 
 	isDefined = true;
 
+	map<string, string *> strings;
+	map<string, vector<pair<Body, int>> *> sprites;
+	map<string, map<const Sound *, int> *> audios;
+	map<string, map<const Effect *, int> *> effects;
+	{
+		strings["display name"] = &displayName;
+		strings["category"] = &category;
+		strings["series"] = &series;
+		strings["plural"] = &pluralName;
+		strings["description"] = &description;
+
+		sprites["flare sprite"] = &flareSprites;
+		sprites["reverse flare sprite"] = &reverseFlareSprites;
+		sprites["steering flare sprite"] = &steeringFlareSprites;
+
+		audios["flare sound"] = &flareSounds;
+		audios["reverse flare sound"] = &reverseFlareSounds;
+		audios["steering flare sound"] = &steeringFlareSounds;
+		audios["hyperdrive sound"] = &hyperSounds;
+		audios["hyperdrive in sound"] = &hyperInSounds;
+		audios["hyperdrive out sound"] = &hyperOutSounds;
+		audios["jump sound"] = &jumpSounds;
+		audios["jump in sound"] = &jumpInSounds;
+		audios["jump out sound"] = &jumpOutSounds;
+
+		effects["afterburner effect"] = &afterburnerEffects;
+		effects["jump effect"] = &jumpEffects;
+	}
+
+	// A single outfit definition may contain multiple 'description' nodes to create a line break within a description.
+	// In this case, subsequent 'description' nodes should not overwrite the previous value.
+	bool overwriteDescription = true;
+
 	for(const DataNode &child : node)
 	{
-		if(child.Token(0) == "display name" && child.Size() >= 2)
-			displayName = child.Token(1);
-		else if(child.Token(0) == "category" && child.Size() >= 2)
-			category = child.Token(1);
-		else if(child.Token(0) == "series" && child.Size() >= 2)
-			series = child.Token(1);
-		else if(child.Token(0) == "index" && child.Size() >= 2)
-			index = child.Value(1);
-		else if(child.Token(0) == "plural" && child.Size() >= 2)
-			pluralName = child.Token(1);
-		else if(child.Token(0) == "flare sprite" && child.Size() >= 2)
+		// Checks if the given node has a token at the given index and returns its value.
+		// If no such token exists, returns 1.
+		static auto GetOptionalValue = [](const DataNode &node, int expectedIndex) -> double
 		{
-			flareSprites.emplace_back(Body(), 1);
-			flareSprites.back().first.LoadSprite(child);
+			if(node.Size() > expectedIndex)
+				return node.Value(expectedIndex);
+			return 1.;
+		};
+
+		bool remove = child.Token(0) == "remove";
+		bool add = !remove && child.Token(0) == "add";
+		int valueIndex = (add || remove) + 1;
+		if(child.Size() < valueIndex)
+		{
+			child.PrintTrace("Error: expected additional tokens.");
+			continue;
 		}
-		else if(child.Token(0) == "reverse flare sprite" && child.Size() >= 2)
+		string key = child.Token(valueIndex - 1);
+		bool hasValue = child.Size() > valueIndex;
+		string valueStr = hasValue ? child.Token(valueIndex) : "";
+
+		if(key == "licenses")
 		{
-			reverseFlareSprites.emplace_back(Body(), 1);
-			reverseFlareSprites.back().first.LoadSprite(child);
-		}
-		else if(child.Token(0) == "steering flare sprite" && child.Size() >= 2)
-		{
-			steeringFlareSprites.emplace_back(Body(), 1);
-			steeringFlareSprites.back().first.LoadSprite(child);
-		}
-		else if(child.Token(0) == "flare sound" && child.Size() >= 2)
-			++flareSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "reverse flare sound" && child.Size() >= 2)
-			++reverseFlareSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "steering flare sound" && child.Size() >= 2)
-			++steeringFlareSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "afterburner effect" && child.Size() >= 2)
-			++afterburnerEffects[GameData::Effects().Get(child.Token(1))];
-		else if(child.Token(0) == "jump effect" && child.Size() >= 2)
-			++jumpEffects[GameData::Effects().Get(child.Token(1))];
-		else if(child.Token(0) == "hyperdrive sound" && child.Size() >= 2)
-			++hyperSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "hyperdrive in sound" && child.Size() >= 2)
-			++hyperInSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "hyperdrive out sound" && child.Size() >= 2)
-			++hyperOutSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "jump sound" && child.Size() >= 2)
-			++jumpSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "jump in sound" && child.Size() >= 2)
-			++jumpInSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "jump out sound" && child.Size() >= 2)
-			++jumpOutSounds[Audio::Get(child.Token(1))];
-		else if(child.Token(0) == "flotsam sprite" && child.Size() >= 2)
-			flotsamSprite = SpriteSet::Get(child.Token(1));
-		else if(child.Token(0) == "thumbnail" && child.Size() >= 2)
-			thumbnail = SpriteSet::Get(child.Token(1));
-		else if(child.Token(0) == "weapon")
-			LoadWeapon(child);
-		else if(child.Token(0) == "ammo" && child.Size() >= 2)
-		{
-			// Non-weapon outfits can have ammo so that storage outfits
-			// properly remove excess ammo when the storage is sold, instead
-			// of blocking the sale of the outfit until the ammo is sold first.
-			ammo = make_pair(GameData::Outfits().Get(child.Token(1)), 0);
-		}
-		else if(child.Token(0) == "description" && child.Size() >= 2)
-		{
-			description += child.Token(1);
-			description += '\n';
-		}
-		else if(child.Token(0) == "cost" && child.Size() >= 2)
-			cost = child.Value(1);
-		else if(child.Token(0) == "mass" && child.Size() >= 2)
-			mass = child.Value(1);
-		else if(child.Token(0) == "licenses" && (child.HasChildren() || child.Size() >= 2))
-		{
-			auto isNewLicense = [](const vector<string> &c, const string &val) noexcept -> bool {
-				return find(c.begin(), c.end(), val) == c.end();
-			};
-			// Add any new licenses that were specified "inline".
-			if(child.Size() >= 2)
+			static auto LicensesInNode = [](const DataNode &node, int valueIndex) -> vector<string>
 			{
-				for(auto it = ++begin(child.Tokens()); it != end(child.Tokens()); ++it)
-					if(isNewLicense(licenses, *it))
-						licenses.push_back(*it);
+				vector<string> result;
+				if(node.Size() > valueIndex)
+					result.push_back(node.Token(valueIndex));
+				if(node.HasChildren())
+					for(const DataNode &child : node)
+						result.push_back(child.Token(0));
+				return result;
+			};
+
+			if(remove)
+			{
+				vector<string> toRemove = LicensesInNode(child, 2);
+				for(string license : toRemove)
+				{
+					auto removeIt = find(licenses.begin(), licenses.end(), license);
+					if(removeIt != licenses.end())
+						licenses.erase(removeIt);
+					else
+						child.PrintTrace("Warning: cannot remove license \""
+								+ license + "\"; this outfit does not have it.");
+				}
 			}
-			// Add any new licenses that were specified as an indented list.
-			for(const DataNode &grand : child)
-				if(isNewLicense(licenses, grand.Token(0)))
-					licenses.push_back(grand.Token(0));
+			else
+			{
+				static auto isNewLicense = [](const vector<string> &c, const string &val) noexcept -> bool {
+					return find(c.begin(), c.end(), val) == c.end();
+				};
+				vector<string> toAdd = LicensesInNode(child, add + 1);
+				if(add)
+				{
+					for(string &license : toAdd)
+						if(isNewLicense(licenses, license))
+							licenses.push_back(license);
+				}
+				else
+					licenses = toAdd;
+			}
 		}
-		else if(child.Token(0) == "jump range" && child.Size() >= 2)
+		else if(remove && !hasValue)
 		{
-			// Jump range must be positive.
-			attributes[child.Token(0)] = max(0., child.Value(1));
+			auto stringIt = strings.find(key);
+			if(stringIt != strings.end())
+			{
+				stringIt->second->clear();
+				continue;
+			}
+			auto spriteIt = sprites.find(key);
+			if(spriteIt != sprites.end())
+			{
+				spriteIt->second->clear();
+				continue;
+			}
+			auto effectIt = effects.find(key);
+			if(effectIt != effects.end())
+			{
+				effectIt->second->clear();
+				continue;
+			}
+			auto audioIt = audios.find(key);
+			if(audioIt != audios.end())
+			{
+				audioIt->second->clear();
+				continue;
+			}
+			if(key == "index")
+				index = 0;
+			else if(key == "thumbnail")
+				thumbnail = nullptr;
+			else if(key == "ammo")
+			{
+				ammo.first = nullptr;
+				ammo.second = 0;
+			}
+			else if(key == "cost")
+				cost = 0;
+			else if(key == "mass")
+				mass = 0.;
+			else
+				attributes[key] = 0.;
 		}
-		else if(child.Size() >= 2)
-			attributes[child.Token(0)] = child.Value(1);
+		else if(remove && hasValue)
+		{
+			auto effectIt = effects.find(key);
+			if(effectIt != effects.end())
+			{
+				(*effectIt->second)[GameData::Effects().Get(valueStr)] = 0;
+				continue;
+			}
+			auto audioIt = audios.find(key);
+			if(audioIt != audios.end())
+			{
+				(*audioIt->second)[Audio::Get(valueStr)] = 0;
+				continue;
+			}
+			else
+				child.PrintTrace("Error: unexpected additional token used with remove.");
+		}
+		else if(hasValue)
+		{
+			// Not all attributes support 'add'.
+			static const set<string> cannotAdd = {
+				"series",
+				"index",
+				"flotsam sprite",
+				"thumbnail",
+				"ammo"
+			};
+
+			if(add && (cannotAdd.count(key) || sprites.count(key)))
+			{
+				child.PrintTrace("Error: unsupported use of 'add'.");
+				continue;
+			}
+
+			auto stringIt = strings.find(key);
+			if(stringIt != strings.end())
+			{
+				bool isDescription = key == "description";
+				if(add || (isDescription && !overwriteDescription))
+					stringIt->second->append(valueStr);
+				else
+					*stringIt->second = valueStr;
+				if(isDescription)
+				{
+					description.append("\n");
+					overwriteDescription = false;
+				}
+				continue;
+			}
+			auto spriteIt = sprites.find(key);
+			if(spriteIt != sprites.end())
+			{
+				auto &spriteArr = *spriteIt->second;
+				spriteArr.emplace_back(Body(), 1);
+				spriteArr.back().first.LoadSprite(child);
+				continue;
+			}
+			auto effectIt = effects.find(key);
+			if(effectIt != effects.end())
+			{
+				if(add)
+					(*effectIt->second)[GameData::Effects().Get(valueStr)] += GetOptionalValue(child, valueIndex + 1);
+				else
+					++(*effectIt->second)[GameData::Effects().Get(valueStr)];
+				continue;
+			}
+			auto audioIt = audios.find(key);
+			if(audioIt != audios.end())
+			{
+				if(add)
+					(*audioIt->second)[Audio::Get(valueStr)] += GetOptionalValue(child, valueIndex + 1);
+				else
+					++(*audioIt->second)[Audio::Get(valueStr)];
+				continue;
+			}
+			if(key == "index")
+				index = child.Value(valueIndex);
+			else if(key == "flotsam sprite")
+				flotsamSprite = SpriteSet::Get(valueStr);
+			else if(key == "thumbnail")
+				thumbnail = SpriteSet::Get(valueStr);
+			else if(key == "ammo")
+			{
+				// Non-weapon outfits can have ammo so that storage outfits
+				// properly remove excess ammo when the storage is sold, instead
+				// of blocking the sale of the outfit until the ammo is sold first.
+				ammo = make_pair(GameData::Outfits().Get(valueStr), 0);
+			}
+			else if(key == "cost")
+			{
+				if(add)
+					cost += child.Value(valueIndex);
+				else
+					cost = child.Value(valueIndex);
+			}
+			else if(key == "mass")
+			{
+				if(add)
+					mass += child.Value(valueIndex);
+				else
+					mass = child.Value(valueIndex);
+			}
+			else if(key == "jump range")
+			{
+				double val = child.Value(valueIndex);
+				// Jump range must be positive.
+				attributes[key] = max(0., add ? attributes[key] + val : val);
+			}
+			else
+			{
+				double val = child.Value(valueIndex);
+				if(add)
+					attributes[key] += val;
+				else
+					attributes[key] = val;
+			}
+		}
+		else if(key == "weapon")
+			LoadWeapon(child);
 		else
 			child.PrintTrace("Skipping unrecognized attribute:");
 	}

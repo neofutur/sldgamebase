@@ -1327,6 +1327,7 @@ void Ship::Place(Point position, Point velocity, Angle angle, bool isDeparting)
 	corrosion = 0.;
 	leakage = 0.;
 	burning = 0.;
+	fogging = 0.;
 	shieldDelay = 0;
 	hullDelay = 0;
 	isInvisible = !HasSprite();
@@ -2328,6 +2329,7 @@ void Ship::Recharge(int rechargeType, bool hireCrew)
 	corrosion = 0.;
 	leakage = 0.;
 	burning = 0.;
+	fogging = 0.;
 	shieldDelay = 0;
 	hullDelay = 0;
 }
@@ -2523,6 +2525,22 @@ double Ship::ShieldLevel() const
 double Ship::DisruptionLevel() const
 {
 	return disruption;
+}
+
+
+
+// Get how fogged this ship's view is.
+double Ship::FogLevel() const
+{
+	return fogging;
+}
+
+
+
+// Get the viewing range of this ship, accounting for fog.
+double Ship::FoggedViewRange() const
+{
+	return min(10000., 100. * (600. / fogging + 2));
 }
 
 
@@ -2808,6 +2826,7 @@ int Ship::TakeDamage(vector<Visual> &visuals, const DamageDealt &damage, const G
 	scrambling += damage.Scrambling();
 	burning += damage.Burn();
 	leakage += damage.Leak();
+	fogging += damage.Fogging();
 
 	disruption += damage.Disruption();
 	slowness += damage.Slowing();
@@ -2858,7 +2877,8 @@ int Ship::TakeDamage(vector<Visual> &visuals, const DamageDealt &damage, const G
 				|| ((damage.Fuel() || damage.Leak()) && fuel < navigation.JumpFuel() * 2.)
 				|| (damage.Scrambling() && CalculateJamChance(Energy(), scrambling) > 0.1)
 				|| (damage.Slowing() && slowness > 10.)
-				|| (damage.Disruption() && disruption > 100.)))
+				|| (damage.Disruption() && disruption > 100.)
+				|| (damage.Fogging() && fogging > 100.)))
 		type |= ShipEvent::PROVOKE;
 
 	// Create target effect visuals, if there are any.
@@ -3250,6 +3270,8 @@ bool Ship::CanFire(const Weapon *weapon) const
 	// Repeat this for various effects which shouldn't drop below 0.
 	if(ionization < -weapon->FiringIon())
 		return false;
+	if (fogging < -weapon->FiringFog())
+		return false;
 	if(disruption < -weapon->FiringDisruption())
 		return false;
 	if(slowness < -weapon->FiringSlowing())
@@ -3299,6 +3321,7 @@ void Ship::ExpendAmmo(const Weapon &weapon)
 	corrosion += weapon.FiringCorrosion();
 	leakage += weapon.FiringLeak();
 	burning += weapon.FiringBurn();
+	fogging += weapon.FiringFog();
 }
 
 
@@ -3787,6 +3810,18 @@ void Ship::DoGeneration()
 			energy, burnEnergy, fuel, burnFuel, heat, burnHeat);
 	}
 
+	if(fogging)
+	{
+		double fogResistance = attributes.Get("fog resistance");
+		double fogEnergy = attributes.Get("fog resistance energy") / fogResistance;
+		double fogFuel = attributes.Get("fog resistance fuel") / fogResistance;
+		double fogHeat = attributes.Get("fog resistance heat") / fogResistance;
+		DoStatusEffect(isDisabled, fogging, fogResistance,
+			energy, fogEnergy, fuel, fogFuel, heat, fogHeat);
+	}
+
+
+
 	// When ships recharge, what actually happens is that they can exceed their
 	// maximum capacity for the rest of the turn, but must be clamped to the
 	// maximum here before they gain more. This is so that, for example, a ship
@@ -3893,6 +3928,8 @@ void Ship::DoPassiveEffects(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &
 		CreateSparks(visuals, "leakage spark", leakage * .1);
 	if(burning)
 		CreateSparks(visuals, "burning spark", burning * .1);
+	if(fogging)
+		CreateSparks(visuals, "fogging spark", fogging * .1);
 }
 
 
@@ -4264,6 +4301,7 @@ void Ship::DoMovement(bool &isUsingAfterburner)
 				scrambling += scale * attributes.Get("turning scramble");
 				leakage += scale * attributes.Get("turning leakage");
 				burning += scale * attributes.Get("turning burn");
+				fogging += scale * attributes.Get("turning fog");
 				slowness += scale * attributes.Get("turning slowing");
 				disruption += scale * attributes.Get("turning disruption");
 
@@ -4319,10 +4357,10 @@ void Ship::DoMovement(bool &isUsingAfterburner)
 					discharge += scale * attributes.Get(isThrusting ? "thrusting discharge" : "reverse thrusting discharge");
 					corrosion += scale * attributes.Get(isThrusting ? "thrusting corrosion" : "reverse thrusting corrosion");
 					ionization += scale * attributes.Get(isThrusting ? "thrusting ion" : "reverse thrusting ion");
-					scrambling += scale * attributes.Get(isThrusting ? "thrusting scramble" :
-						"reverse thrusting scramble");
+					scrambling += scale * attributes.Get(isThrusting ? "thrusting scramble" : "reverse thrusting scramble");
 					burning += scale * attributes.Get(isThrusting ? "thrusting burn" : "reverse thrusting burn");
 					leakage += scale * attributes.Get(isThrusting ? "thrusting leakage" : "reverse thrusting leakage");
+					fogging += scale * attributes.Get(isThrusting ? "thrusting fog" : "reverse thrusting fog");
 					slowness += scale * attributes.Get(isThrusting ? "thrusting slowing" : "reverse thrusting slowing");
 					disruption += scale * attributes.Get(isThrusting ? "thrusting disruption" : "reverse thrusting disruption");
 
@@ -4347,6 +4385,7 @@ void Ship::DoMovement(bool &isUsingAfterburner)
 			double scramblingCost = attributes.Get("afterburner scramble");
 			double leakageCost = attributes.Get("afterburner leakage");
 			double burningCost = attributes.Get("afterburner burn");
+			double foggingCost = attributes.Get("afterburner fog");
 
 			double slownessCost = attributes.Get("afterburner slowing");
 			double disruptionCost = attributes.Get("afterburner disruption");
@@ -4366,6 +4405,7 @@ void Ship::DoMovement(bool &isUsingAfterburner)
 				scrambling += scramblingCost;
 				leakage += leakageCost;
 				burning += burningCost;
+				fogging += foggingCost;
 
 				slowness += slownessCost;
 				disruption += disruptionCost;

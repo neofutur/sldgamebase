@@ -126,6 +126,7 @@ public:
 	double FiringCorrosion() const;
 	double FiringLeak() const;
 	double FiringBurn() const;
+	double FiringFog() const;
 
 	// Relative damage sustained on firing ship when weapon fired.
 	double RelativeFiringEnergy() const;
@@ -170,6 +171,7 @@ public:
 	double CorrosionDamage() const;
 	double LeakDamage() const;
 	double BurnDamage() const;
+	double FogDamage() const;
 	// Relative damage types:
 	double RelativeShieldDamage() const;
 	double RelativeHullDamage() const;
@@ -285,6 +287,7 @@ private:
 	double firingCorrosion = 0.;
 	double firingLeak = 0.;
 	double firingBurn = 0.;
+	double firingFog = 0.;
 
 	double relativeFiringEnergy = 0.;
 	double relativeFiringHeat = 0.;
@@ -297,7 +300,7 @@ private:
 	double blastRadius = 0.;
 	double safeRange = 0.;
 
-	static const int DAMAGE_TYPES = 23;
+	static const int DAMAGE_TYPES = 24;
 	static const int HIT_FORCE = 0;
 	// Normal damage types:
 	static const int SHIELD_DAMAGE = 1;
@@ -316,14 +319,15 @@ private:
 	static const int CORROSION_DAMAGE = 13;
 	static const int LEAK_DAMAGE = 14;
 	static const int BURN_DAMAGE = 15;
+	static const int FOG_DAMAGE = 16;
 	// Relative damage types:
-	static const int RELATIVE_SHIELD_DAMAGE = 16;
-	static const int RELATIVE_HULL_DAMAGE = 17;
-	static const int RELATIVE_DISABLED_DAMAGE = 18;
-	static const int RELATIVE_MINABLE_DAMAGE = 19;
-	static const int RELATIVE_FUEL_DAMAGE = 20;
-	static const int RELATIVE_HEAT_DAMAGE = 21;
-	static const int RELATIVE_ENERGY_DAMAGE = 22;
+	static const int RELATIVE_SHIELD_DAMAGE = 17;
+	static const int RELATIVE_HULL_DAMAGE = 18;
+	static const int RELATIVE_DISABLED_DAMAGE = 19;
+	static const int RELATIVE_MINABLE_DAMAGE = 20;
+	static const int RELATIVE_FUEL_DAMAGE = 21;
+	static const int RELATIVE_HEAT_DAMAGE = 22;
+	static const int RELATIVE_ENERGY_DAMAGE = 23;
 	mutable double damage[DAMAGE_TYPES] = {};
 
 	double piercing = 0.;
@@ -385,6 +389,7 @@ inline double Weapon::FiringDischarge() const{ return firingDischarge; }
 inline double Weapon::FiringCorrosion() const{ return firingCorrosion; }
 inline double Weapon::FiringLeak() const{ return firingLeak; }
 inline double Weapon::FiringBurn() const{ return firingBurn; }
+inline double Weapon::FiringFog() const{ return firingFog; }
 
 inline double Weapon::RelativeFiringEnergy() const{ return relativeFiringEnergy; }
 inline double Weapon::RelativeFiringHeat() const{ return relativeFiringHeat; }
@@ -421,6 +426,7 @@ inline double Weapon::DischargeDamage() const { return TotalDamage(DISCHARGE_DAM
 inline double Weapon::CorrosionDamage() const { return TotalDamage(CORROSION_DAMAGE); }
 inline double Weapon::LeakDamage() const { return TotalDamage(LEAK_DAMAGE); }
 inline double Weapon::BurnDamage() const { return TotalDamage(BURN_DAMAGE); }
+inline double Weapon::FogDamage() const { return TotalDamage(FOG_DAMAGE); }
 
 inline double Weapon::RelativeShieldDamage() const { return TotalDamage(RELATIVE_SHIELD_DAMAGE); }
 inline double Weapon::RelativeHullDamage() const { return TotalDamage(RELATIVE_HULL_DAMAGE); }

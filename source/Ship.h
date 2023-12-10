@@ -320,6 +320,9 @@ public:
 	double ShieldLevel() const;
 	// Get how disrupted this ship's shields are.
 	double DisruptionLevel() const;
+	// Get how fogged this ship's vision is.
+	double FogLevel() const;
+	double FoggedViewRange() const;
 	// Get the (absolute) amount of hull that needs to be damaged until the
 	// ship becomes disabled. Returns 0 if the ships hull is already below the
 	// disabled threshold.
@@ -622,6 +625,8 @@ private:
 	double leakage = 0.;
 	// Accrued "burn damage" that will affect this ship's heat over time.
 	double burning = 0.;
+	// Accrued "fog damage" that will affect the vision of this ship.
+	double fogging = 0.;
 	// Delays for shield generation and hull repair.
 	int shieldDelay = 0;
 	int hullDelay = 0;

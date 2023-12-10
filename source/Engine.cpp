@@ -65,6 +65,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "SystemEntry.h"
 #include "Test.h"
 #include "TestContext.h"
+#include "VignetteShader.h"
 #include "Visual.h"
 #include "Weather.h"
 #include "Wormhole.h"
@@ -1026,6 +1027,7 @@ void Engine::Draw() const
 	static const Set<Color> &colors = GameData::Colors();
 	const Interface *hud = GameData::Interfaces().Get("hud");
 
+
 	// Draw any active planet labels.
 	if(Preferences::Has("Show planet labels"))
 		for(const PlanetLabel &label : labels)
@@ -1079,12 +1081,45 @@ void Engine::Draw() const
 		OutlineShader::Draw(highlightSprite, Point(), size, color, highlightUnit, highlightFrame);
 	}
 
+	// Draw the faction markers.
+	const Font &font = FontSet::Get(14);
+	if(targetSwizzle >= 0 && hud->HasPoint("faction markers"))
+	{
+		int width = font.Width(info.GetString("target government"));
+		Point center = hud->GetPoint("faction markers");
+
+		const Sprite *mark[2] = {SpriteSet::Get("ui/faction left"), SpriteSet::Get("ui/faction right")};
+		// Round the x offsets to whole numbers so the icons are sharp.
+		double dx[2] = {(width + mark[0]->Width() + 1) / -2, (width + mark[1]->Width() + 1) / 2};
+		for(int i = 0; i < 2; ++i)
+			SpriteShader::Draw(mark[i], center + Point(dx[i], 0.), 1., targetSwizzle);
+	}
+	if(jumpCount && Preferences::Has("Show mini-map"))
+		MapPanel::DrawMiniMap(player, .5f * min(1.f, jumpCount / 30.f), jumpInProgress, step);
+
+	// Draw crosshairs around anything that is targeted.
+	for(const Target &target : targets)
+	{
+		Angle a = target.angle;
+		Angle da(360. / target.count);
+
+		PointerShader::Bind();
+		for(int i = 0; i < target.count; ++i)
+		{
+			PointerShader::Add(target.center * zoom, a.Unit(), 12.f, 14.f, -target.radius * zoom, target.color);
+			a += da;
+		}
+		PointerShader::Unbind();
+	}
+
+	if(player.Flagship())
+		VignetteShader::Draw(player.Flagship()->FogLevel(), zoom);
+
 	if(flash)
 		FillShader::Fill(Point(), Point(Screen::Width(), Screen::Height()), Color(flash, flash));
 
 	// Draw messages. Draw the most recent messages first, as some messages
 	// may be wrapped onto multiple lines.
-	const Font &font = FontSet::Get(14);
 	const vector<Messages::Entry> &messages = Messages::Get(step);
 	Rectangle messageBox = hud->GetBox("messages");
 	WrappedText messageLine(font);
@@ -1119,21 +1154,6 @@ void Engine::Draw() const
 		messageLine.Draw(messagePoint, color->Additive(alpha));
 	}
 
-	// Draw crosshairs around anything that is targeted.
-	for(const Target &target : targets)
-	{
-		Angle a = target.angle;
-		Angle da(360. / target.count);
-
-		PointerShader::Bind();
-		for(int i = 0; i < target.count; ++i)
-		{
-			PointerShader::Add(target.center * zoom, a.Unit(), 12.f, 14.f, -target.radius * zoom, target.color);
-			a += da;
-		}
-		PointerShader::Unbind();
-	}
-
 	// Draw the heads-up display.
 	hud->Draw(info);
 	if(hud->HasPoint("radar"))
@@ -1150,21 +1170,6 @@ void Engine::Draw() const
 		double radius = hud->GetValue("target radius");
 		PointerShader::Draw(center, targetVector.Unit(), 10.f, 10.f, radius, Color(1.f));
 	}
-
-	// Draw the faction markers.
-	if(targetSwizzle >= 0 && hud->HasPoint("faction markers"))
-	{
-		int width = font.Width(info.GetString("target government"));
-		Point center = hud->GetPoint("faction markers");
-
-		const Sprite *mark[2] = {SpriteSet::Get("ui/faction left"), SpriteSet::Get("ui/faction right")};
-		// Round the x offsets to whole numbers so the icons are sharp.
-		double dx[2] = {(width + mark[0]->Width() + 1) / -2, (width + mark[1]->Width() + 1) / 2};
-		for(int i = 0; i < 2; ++i)
-			SpriteShader::Draw(mark[i], center + Point(dx[i], 0.), 1., targetSwizzle);
-	}
-	if(jumpCount && Preferences::Has("Show mini-map"))
-		MapPanel::DrawMiniMap(player, .5f * min(1.f, jumpCount / 30.f), jumpInProgress, step);
 
 	// Draw ammo status.
 	double ammoIconWidth = hud->GetValue("ammo icon width");
@@ -2429,7 +2434,7 @@ void Engine::FillRadar()
 		{
 			// Do not show cloaked ships on the radar, except the player's ships.
 			bool isYours = ship->IsYours();
-			if(ship->Cloaking() >= 1. && !isYours)
+			if(!isYours && (ship->Cloaking() || ship->Attributes().Get("radar cloak") >= 1.))
 				continue;
 
 			// Figure out what radar color should be used for this ship.

@@ -1658,3 +1658,76 @@ mission "Strider notification"
 			scene `thumbnail/hai pond strider`
 			`Upon landing on <planet>, you receive a message from Osen. "Hello Captain <last>! I hope this message finds you well. I would like to once again thank you for your help on the Pond Strider, and would like to inform you that we have finished implementing the hull repair technology that you have provided us into the Pond Strider design and have now begun producing the ship on a mass scale. You'll also be interested to find that we have developed new weaponry for the Pond Strider's drone, the Flea. I won't spoil the surprise for you though. Check the shipyard on Hai-home the next time you stop by to take a look at it."`
 				decline
+
+
+
+mission "Hai Translator Ban Timer"
+	invisible
+	landing
+	to offer
+		has "event: hai-human resolution announced"
+		has "Wanderers Conversation: offered"
+	on offer
+		event "Hai Translator Ban Lifted" 20 30
+		fail
+
+event "Hai Translator Ban Lifted"
+
+
+
+mission "Hai Translator Ban Lifted"
+	invisible
+	landing
+	source
+		government Hai
+	to offer
+		has "event: Hai Translator Ban Lifted"
+		or
+			not "Hai Translator Offers"
+			random < 20
+	on offer
+		conversation
+			action
+				"Hai Translator Offers" ++
+			`Nearby, you see a store with a big sign, "Hai Speaking Devices: New Reduced Price: 1200 credits!" A Hai saleswoman under the sign is holding a strange orb and waving at you. Do you want to check it out?`
+			choice
+				`	(Yes.)`
+				`	(No.)`
+					defer
+				`	(Never.)`
+					decline
+					to display
+						"Hai Translator Offers" > 1
+			`	The saleswoman says something in Hai you don't understand, and holds up to you a small, spherical device, with speakers and microphones mounted on it, as well as what look like camera lenses.`
+			`	She presses a button on the device, and it translates, speaking in her voice. "This device is [programmed, trained] with the human and Hai languages," it says. "It is not always possible to [translate, interpret] perfectly between our languages, but it will try to give you a sense of the [range of meanings, subtext] in what is being said."`
+			`	For a few minutes, she demonstrates how the machine works, holding a conversation with you in the Hai language. The machine automatically translates for you and then translates your responses back into her language. It apparently uses its cameras to track who you are speaking to or listening to. It's an impressive piece of technology, and easy enough to use.`
+			`	"Only 1200 credits," she says. "A good [bargain, investment], yes?"`
+			label maybe
+			choice
+				`	"I already have one."`
+					decline
+					to display
+						has "language: Hai"
+				`	"Yes, I'll take one."`
+					goto yup
+					to display
+						not "language: Hai"
+						credits >= 1200
+				`	"Maybe later."`
+					defer
+				`	"Why are these suddenly available now?"`
+					to display
+						not "Hai Translator Ban Lifted: why?"
+				`	"Certainly not. I prefer the mystery of not knowing what the Hai are saying."`
+					decline
+			action
+				set "Hai Translator Ban Lifted: why?"
+			`	"Until our [awakening, transformation], for Hai, [security, safety] could only be [earned, gleaned] through secrecy. When we first met your species, you had automated [translation, speaking] technology, as did we. If that technology was [generally available, pervasive], there would be much room for [unwanted conflict, misunderstandings], should a human venture into [unfamiliar, unwelcoming] areas. In their great [wisdom, dormancy], the Elders [banned, forbade] humans to use that technology on our language."`
+			`	"Times have [advanced, improved], and so have the Elders," she smiles. You notice some Teeneep merchandise behind her, including an expensive autographed sword. "The [dictate, law] is gone, and it costs only 1200 credits to [understand, befriend] any Hai. How about it?"`
+				goto maybe
+			label yup
+			action
+				set "language: Hai"
+				payment -1200
+			`	"Here is your speaking machine." The saleswoman swaps the device for your credit chips. As you depart, she waves over another customer.`
+				decline

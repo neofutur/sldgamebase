@@ -378,10 +378,12 @@ void PreferencesPanel::DrawControls()
 		Command::DEPLOY,
 		Command::FIGHT,
 		Command::GATHER,
-		Command::HOLD,
+		Command::HOLD_FIRE,
+		Command::HOLD_POSITION,
 		Command::AMMO,
 		Command::HARVEST
 	};
+	// After how many command a break should occur to push things on the second half of the panel.
 	static const Command *BREAK = &COMMANDS[19];
 	for(const Command &command : COMMANDS)
 	{

@@ -444,7 +444,12 @@ void AI::UpdateKeys(PlayerInfo &player, Command &activeCommands)
 	}
 	else if(activeCommands.Has(Command::FIGHT) && targetAsteroid)
 		IssueAsteroidTarget(player, targetAsteroid);
-	if(activeCommands.Has(Command::HOLD))
+	if(activeCommands.Has(Command::HOLD_FIRE))
+	{
+		newOrders.type = Orders::HOLD_FIRE;
+		IssueOrders(player, newOrders, "holding fire.");
+	}
+	if(activeCommands.Has(Command::HOLD_POSITION))
 	{
 		newOrders.type = Orders::HOLD_POSITION;
 		IssueOrders(player, newOrders, "holding position.");
@@ -1290,6 +1295,8 @@ shared_ptr<Ship> AI::FindTarget(const Ship &ship) const
 		auto it = orders.find(&ship);
 		if(it != orders.end() && (it->second.type == Orders::ATTACK || it->second.type == Orders::FINISH_OFF))
 			return it->second.target.lock();
+		else if(holdFire.count(&ship))
+			return target;
 	}
 
 	// If this ship is not armed, do not make it fight.
@@ -3418,8 +3425,10 @@ void AI::AutoFire(const Ship &ship, FireCommand &command, bool secondary, bool i
 		if(it != orders.end() && it->second.target.lock() == currentTarget)
 		{
 			disabledOverride = (it->second.type == Orders::FINISH_OFF);
-			friendlyOverride = disabledOverride | (it->second.type == Orders::ATTACK);
+			friendlyOverride = disabledOverride || (it->second.type == Orders::ATTACK);
 		}
+		if(!disabledOverride && !friendlyOverride && holdFire.count(&ship))
+			return;
 	}
 	bool currentIsEnemy = currentTarget
 		&& currentTarget->GetGovernment()->IsEnemy(gov)
@@ -4527,6 +4536,21 @@ void AI::IssueOrders(const PlayerInfo &player, const Orders &newOrders, const st
 	if(ships.empty())
 		return;
 
+	bool isHoldFireOrder = (newOrders.type == Orders::HOLD_FIRE);
+	bool holdingFire = false;
+	if(isHoldFireOrder)
+	{
+		// Set all the ships to the same behavior opposite of the first ship.
+		holdingFire = !holdFire.count(ships[0]);
+		for(const Ship *ship : ships)
+		{
+			if(holdingFire)
+				holdFire.insert(ship);
+			else
+				holdFire.erase(ship);
+		}
+	}
+
 	Point centerOfGravity;
 	bool isMoveOrder = (newOrders.type == Orders::MOVE_TO);
 	int squadCount = 0;
@@ -4582,7 +4606,10 @@ void AI::IssueOrders(const PlayerInfo &player, const Orders &newOrders, const st
 			// asteroid.
 			if(hasMismatch && targetAsteroid)
 				alreadyHarvesting = (existing.type == newOrders.type) && (newOrders.type == Orders::HARVEST);
-			existing = newOrders;
+
+			// The hold fire order should not overwrite compatible old orders like movements.
+			if(newOrders.type != Orders::HOLD_FIRE || (existing.type == Orders::FINISH_OFF || existing.type == Orders::ATTACK))
+				existing = newOrders;
 
 			if(isMoveOrder)
 			{
@@ -4608,7 +4635,7 @@ void AI::IssueOrders(const PlayerInfo &player, const Orders &newOrders, const st
 
 	if(alreadyHarvesting)
 		return;
-	else if(hasMismatch)
+	else if(holdingFire || (hasMismatch && !isHoldFireOrder))
 		Messages::Add(who + description, Messages::Importance::High);
 	else
 	{

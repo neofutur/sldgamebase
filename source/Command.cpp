@@ -74,14 +74,15 @@ const Command Command::FULLSCREEN(ONE << 23, "Toggle fullscreen");
 const Command Command::FASTFORWARD(ONE << 24, "Toggle fast-forward");
 const Command Command::HELP(ONE << 25, "Show help");
 const Command Command::FIGHT(ONE << 26, "Fleet: Fight my target");
-const Command Command::GATHER(ONE << 27, "Fleet: Gather around me");
-const Command Command::HOLD(ONE << 28, "Fleet: Hold position");
-const Command Command::HARVEST(ONE << 29, "Fleet: Harvest flotsam");
-const Command Command::AMMO(ONE << 30, "Fleet: Toggle ammo usage");
-const Command Command::AUTOSTEER(ONE << 31, "Auto steer");
-const Command Command::WAIT(ONE << 32, "");
-const Command Command::STOP(ONE << 33, "");
-const Command Command::SHIFT(ONE << 34, "");
+const Command Command::GATHER(ONE << 28, "Fleet: Gather around me");
+const Command Command::HOLD_FIRE(ONE << 27, "Fleet: Toggle hold fire");
+const Command Command::HOLD_POSITION(ONE << 29, "Fleet: Hold position");
+const Command Command::HARVEST(ONE << 30, "Fleet: Harvest flotsam");
+const Command Command::AMMO(ONE << 31, "Fleet: Toggle ammo usage");
+const Command Command::AUTOSTEER(ONE << 32, "Auto steer");
+const Command Command::WAIT(ONE << 33, "");
+const Command Command::STOP(ONE << 34, "");
+const Command Command::SHIFT(ONE << 35, "");
 
 
 
@@ -269,7 +270,7 @@ void Command::Load(const DataNode &node)
 			{"hail", Command::HAIL},
 			{"scan", Command::SCAN},
 			{"jump", Command::JUMP},
-			{"mouseturninghold", Command::MOUSE_TURNING_HOLD},
+			{"mouse turning hold", Command::MOUSE_TURNING_HOLD},
 			{"fleet jump", Command::FLEET_JUMP},
 			{"target", Command::TARGET},
 			{"nearest", Command::NEAREST},
@@ -282,7 +283,8 @@ void Command::Load(const DataNode &node)
 			{"fastforward", Command::FASTFORWARD},
 			{"fight", Command::FIGHT},
 			{"gather", Command::GATHER},
-			{"hold", Command::HOLD},
+			{"hold fire", Command::HOLD_FIRE},
+			{"hold position", Command::HOLD_POSITION},
 			{"ammo", Command::AMMO},
 			{"nearest asteroid", Command::NEAREST_ASTEROID},
 			{"wait", Command::WAIT},

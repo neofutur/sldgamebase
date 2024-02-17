@@ -95,3 +95,8 @@ planet "Sies Upi"
 		log "Minor People" "Torrey and Irene" `Torrey Dupont, an activist, is friends with SMDP militia NCO Irene Brower. You delivered a package for them.`
 		"Brin"
 		"exis"
+	`	"Eu sei, mas e que eu realmente nao acho que isso vai so acontecer. O vo do meu vo tambem passou a vida esperando a mesma coisa, e hoje eu e tu tamos aqui, negociando com capitalistas."`
+	`	"Eu preferiria se tu nao fosse tao negativo, camarada. Tu sabe tao bem quanto eu que e so uma questao de esperar as coisas entrarem em colapso. Porra, tem uma guerra civil arriscando comecar a qualquer momento, se segura por so mais um pouquinho! Inclusive, eu escutei a pouco que-"`
+# Following two lines to be deleted once unicode support is added
+	#`	"Eu preferiria se tu não fosse tão negativo, camarada. Tu sabe tão bem quanto eu que é só uma questão de esperar as coisas entrarem em colapso. Porra, tem uma guerra civil arriscando começar a qualquer momento, se segura por só mais um pouquinho! Inclusive, eu escutei a pouco que – "`
+	`	"Eu preferiria se tu nao fosse tao negativo, camarada. Tu sabe tao bem quanto eu que e so uma questao de esperar as coisas entrarem em colapso. Porra, tem uma guerra civil arriscando começar a qualquer momento, se segura por so mais um pouquinho! Inclusive, eu escutei a pouco que-"`

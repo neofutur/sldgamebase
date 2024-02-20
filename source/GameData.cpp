@@ -51,6 +51,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Plugins.h"
 #include "PointerShader.h"
 #include "Politics.h"
+#include "Raiders.h"
 #include "RenderBuffer.h"
 #include "RingShader.h"
 #include "Ship.h"
@@ -77,6 +78,7 @@ namespace {
 	Set<Fleet> defaultFleets;
 	Set<Government> defaultGovernments;
 	Set<Planet> defaultPlanets;
+	Set<Raiders> defaultRaiders;
 	Set<System> defaultSystems;
 	Set<Galaxy> defaultGalaxies;
 	Set<Sale<Ship>> defaultShipSales;
@@ -180,6 +182,7 @@ void GameData::FinishLoading()
 	defaultFleets = objects.fleets;
 	defaultGovernments = objects.governments;
 	defaultPlanets = objects.planets;
+	defaultRaiders = objects.raiders;
 	defaultSystems = objects.systems;
 	defaultGalaxies = objects.galaxies;
 	defaultShipSales = objects.shipSales;
@@ -336,6 +339,7 @@ void GameData::Revert()
 	objects.fleets.Revert(defaultFleets);
 	objects.governments.Revert(defaultGovernments);
 	objects.planets.Revert(defaultPlanets);
+	objects.raiders.Revert(defaultRaiders);
 	objects.systems.Revert(defaultSystems);
 	objects.galaxies.Revert(defaultGalaxies);
 	objects.shipSales.Revert(defaultShipSales);
@@ -650,6 +654,13 @@ const Set<Phrase> &GameData::Phrases()
 const Set<Planet> &GameData::Planets()
 {
 	return objects.planets;
+}
+
+
+
+const Set<Raiders> &GameData::GetRaiders()
+{
+	return objects.raiders;
 }
 
 

@@ -274,7 +274,7 @@ government "Free Worlds"
 	"bribe" .1
 	"friendly hail" "friendly free worlds"
 	"hostile hail" "hostile free worlds"
-	raid "pirate raid"
+	raiders "pirates"
 
 government "Free Worlds that won't enter wormhole"
 	"display name" "Free Worlds"
@@ -293,7 +293,7 @@ government "Free Worlds that won't enter wormhole"
 	"bribe" .1
 	"friendly hail" "friendly free worlds"
 	"hostile hail" "hostile free worlds"
-	raid "pirate raid"
+	raiders "pirates"
 
 
 government "Gegno"
@@ -683,7 +683,7 @@ government "Independent"
 	"fine" 0
 	"friendly hail" "friendly civilian"
 	"hostile hail" "hostile civilian"
-	raid "Large Southern Pirates"
+	raiders "Large Southern Pirates"
 
 # A government used for "Independent" ships that the player is allowed to kill without consequences.
 government "Independent (Killable)"
@@ -1003,7 +1003,7 @@ government "Neutral"
 	"bribe" .05
 	"friendly hail" "friendly civilian"
 	"hostile hail" "hostile civilian"
-	raid "pirate raid"
+	raiders "pirates"
 
 government "Parrot"
 	swizzle 2
@@ -1029,7 +1029,7 @@ government "Pirate"
 	"fine" 0
 	"friendly hail" "friendly pirate"
 	"hostile hail" "hostile pirate"
-	raid "pirate raid"
+	raiders "pirates"
 
 government "Pirate (Devil-Run Gang)"
 	swizzle 6
@@ -1068,7 +1068,7 @@ government "Pirate (Rival)"
 	"fine" 0
 	"friendly hail" "friendly pirate"
 	"hostile hail" "hostile pirate"
-	raid "pirate raid"
+	raiders "pirates"
 
 color "governments: Pug" .99 .89 .70
 
@@ -1305,7 +1305,7 @@ government "Republic"
 		"Neutral" .1
 	"friendly hail" "friendly navy"
 	"hostile hail" "hostile navy"
-	raid "pirate raid"
+	raiders "pirates"
 
 government "Republic Intelligence"
 	swizzle 0
@@ -1337,7 +1337,7 @@ government "Republic that won't enter wormhole"
 		"Neutral" .1
 	"friendly hail" "friendly navy"
 	"hostile hail" "hostile navy"
-	raid "pirate raid"
+	raiders "pirates"
 
 government "Republic (Friendly)"
 	"display name" "Republic"
@@ -1428,7 +1428,7 @@ government "Syndicate"
 	"bribe" .08
 	"friendly hail" "friendly syndicate"
 	"hostile hail" "hostile syndicate"
-	raid "pirate raid"
+	raiders "pirates"
 
 government "Syndicate (Extremist)"
 	swizzle 1

@@ -1549,6 +1549,14 @@ void Ship::SetCommands(const FireCommand &firingCommand)
 
 
 
+void Ship::SetCommands(const Command &command, const FireCommand &firingCommand)
+{
+	SetCommands(command);
+	SetCommands(firingCommand);
+}
+
+
+
 const Command &Ship::Commands() const
 {
 	return commands;

@@ -107,6 +107,11 @@ private:
 	void SelectRoute(Ship &ship, const System *targetSystem) const;
 	bool ShouldDock(const Ship &ship, const Ship &parent, const System *playerSystem) const;
 
+	bool HandleCarriedShips(const std::shared_ptr<Ship> &ship, std::shared_ptr<Ship> &parent, Command &command,
+		const System *playerSystem) const;
+	bool HandlePersonalityTraits(const std::shared_ptr<Ship> &ship, std::shared_ptr<Ship> &parent, Command &command,
+		std::shared_ptr<Ship> &target, int &minerCount, bool strandedWithHelper);
+
 	// Methods of moving from the current position to a desired position / orientation.
 	static double TurnBackward(const Ship &ship);
 	// Determine the value to use in Command::SetTurn() to turn the ship towards the desired facing.

@@ -615,6 +615,8 @@ private:
 	// Various energy levels:
 	double shields = 0.;
 	double hull = 0.;
+	double shieldsWear = 0.;
+	double hullWear = 0.;
 	double fuel = 0.;
 	double energy = 0.;
 	double heat = 0.;

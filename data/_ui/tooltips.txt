@@ -1062,6 +1062,9 @@ tip "no thruster!"
 tip "no steering!"
 	`This ship is unable to turn. You must install steering systems.`
 
+tip "low battery!"
+	`This ship does not have enough energy generation or battery storage to provide sustained flight.`
+
 tip "insufficient bunks?"
 	`This ship does not have enough bunks for its crew. It could become unresponsive at random times.`
 
@@ -1079,6 +1082,9 @@ tip "limited thrust?"
 
 tip "limited turn?"
 	`This ship's energy supply is not sufficient to run the steering at full power. Its turn rate will be diminished.`
+
+tip "low battery?"
+	`This ship will have very limited sustained flight due to battery capacity.`
 
 tip "solar power?"
 	`This ship is powered entirely by solar energy. It could be difficult to maneuver if you fly too far from the center of a star system, because your engines will only have a fraction of the power they require.`

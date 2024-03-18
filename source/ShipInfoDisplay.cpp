@@ -333,55 +333,42 @@ void ShipInfoDisplay::UpdateAttributes(const Ship &ship, const PlayerInfo &playe
 	// Skip a spacer and the table header.
 	attributesHeight += 30;
 
-	const double idleEnergyPerFrame = attributes.Get("energy generation")
-		+ attributes.Get("solar collection")
-		+ attributes.Get("fuel energy")
-		- attributes.Get("energy consumption")
-		- attributes.Get("cooling energy");
 	const double idleHeatPerFrame = attributes.Get("heat generation")
 		+ attributes.Get("solar heat")
 		+ attributes.Get("fuel heat")
 		- ship.CoolingEfficiency() * (attributes.Get("cooling") + attributes.Get("active cooling"));
 	tableLabels.push_back("idle:");
-	energyTable.push_back(Format::Number(60. * idleEnergyPerFrame));
+	energyTable.push_back(Format::Number(60. * ship.GetIdleEnergyPerFrame()));
 	heatTable.push_back(Format::Number(60. * idleHeatPerFrame));
 
 	// Add energy and heat while moving to the table.
 	attributesHeight += 20;
-	const double movingEnergyPerFrame =
-		max(attributes.Get("thrusting energy"), attributes.Get("reverse thrusting energy"))
-		+ attributes.Get("turning energy")
-		+ attributes.Get("afterburner energy");
 	const double movingHeatPerFrame = max(attributes.Get("thrusting heat"), attributes.Get("reverse thrusting heat"))
 		+ attributes.Get("turning heat")
 		+ attributes.Get("afterburner heat");
 	tableLabels.push_back("moving:");
-	energyTable.push_back(Format::Number(-60. * movingEnergyPerFrame));
+	energyTable.push_back(Format::Number(-60. * ship.GetMovingTotalEnergyPerFrame()));
 	heatTable.push_back(Format::Number(60. * movingHeatPerFrame));
 
 	// Add energy and heat while firing to the table.
 	attributesHeight += 20;
-	double firingEnergy = 0.;
 	double firingHeat = 0.;
 	for(const auto &it : ship.Outfits())
 		if(it.first->IsWeapon() && it.first->Reload())
 		{
-			firingEnergy += it.second * it.first->FiringEnergy() / it.first->Reload();
 			firingHeat += it.second * it.first->FiringHeat() / it.first->Reload();
 		}
 	tableLabels.push_back("firing:");
-	energyTable.push_back(Format::Number(-60. * firingEnergy));
+	energyTable.push_back(Format::Number(-60. * ship.GetFiringEnergyPerFrame()));
 	heatTable.push_back(Format::Number(60. * firingHeat));
 
 	// Add energy and heat when doing shield and hull repair to the table.
 	attributesHeight += 20;
-	double shieldEnergy = (hasShieldRegen) ? attributes.Get("shield energy")
-		* (1. + attributes.Get("shield energy multiplier")) : 0.;
-	double hullEnergy = (hasHullRepair) ? attributes.Get("hull energy")
-		* (1. + attributes.Get("hull energy multiplier")) : 0.;
+	double shieldEnergy = ship.GetShieldEnergyPerFrame();
+	double hullEnergy = ship.GetHullEnergyPerFrame();
 	tableLabels.push_back((shieldEnergy && hullEnergy) ? "shields / hull:" :
 		hullEnergy ? "repairing hull:" : "charging shields:");
-	energyTable.push_back(Format::Number(-60. * (shieldEnergy + hullEnergy)));
+	energyTable.push_back(Format::Number(-60. * ship.GetRegenEnergyPerFrame()));
 	double shieldHeat = (hasShieldRegen) ? attributes.Get("shield heat")
 		* (1. + attributes.Get("shield heat multiplier")) : 0.;
 	double hullHeat = (hasHullRepair) ? attributes.Get("hull heat")
@@ -392,11 +379,8 @@ void ShipInfoDisplay::UpdateAttributes(const Ship &ship, const PlayerInfo &playe
 	{
 		// Add up the maximum possible changes and add the total to the table.
 		attributesHeight += 20;
-		const double overallEnergy = idleEnergyPerFrame
-			- movingEnergyPerFrame
-			- firingEnergy
-			- shieldEnergy
-			- hullEnergy;
+		const double overallEnergy = ship.GetEnergyConsumptionPerFrame();
+
 		const double overallHeat = idleHeatPerFrame
 			+ movingHeatPerFrame
 			+ firingHeat

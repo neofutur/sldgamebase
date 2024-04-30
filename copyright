@@ -152,6 +152,7 @@ Files:
  images/land/enceladus_2*
  images/land/enceladus_3*
  images/land/enceladus_4*
+ images/land/moon2*
  images/ui/galaxy*
  images/ui/pleiades*
  images/planet/callisto*
@@ -1486,6 +1487,17 @@ Copyright: US NOAA
 License: public-domain
  From US NOAA, and therefore in the public domain because it was created by
  government employees while doing work for the government.
+
+Files:
+ images/land/badlands14*
+Copyright: Azzedine Rouichi
+License: Unsplash
+Comment:
+ This image was uploaded to
+ unsplash.com after June 2017, so it is subject to the
+ Unsplash License. It was also uploaded after February 2018,
+ so it is subject to an additional restriction limiting the
+ sale of unaltered copies.
 
 Files:
  images/land/lava0*

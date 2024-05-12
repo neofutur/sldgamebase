@@ -1527,17 +1527,22 @@ string Ship::GetHail(map<string, string> &&subs) const
 
 
 
-ShipAICache &Ship::GetAICache()
+const ShipAICache &Ship::GetAICache() const
 {
 	return aiCache;
 }
 
 
 
-void Ship::UpdateCaches()
+void Ship::UpdateCaches(bool massLessChange)
 {
-	aiCache.Recalibrate(*this);
-	navigation.Recalibrate(*this);
+	if(massLessChange)
+		aiCache.Calibrate(*this);
+	else
+	{
+		aiCache.Recalibrate(*this);
+		navigation.Recalibrate(*this);
+	}
 }
 
 
@@ -2963,11 +2968,25 @@ double Ship::TurnRate() const
 
 
 
+double Ship::TrueTurnRate() const
+{
+	return TurnRate() * 1. / (1. + slowness * .05);
+}
+
+
+
 double Ship::Acceleration() const
 {
 	double thrust = attributes.Get("thrust");
 	return (thrust ? thrust : attributes.Get("afterburner thrust")) / InertialMass()
 		* (1. + attributes.Get("acceleration multiplier"));
+}
+
+
+
+double Ship::TrueAcceleration() const
+{
+	return Acceleration() * 1. / (1. + slowness * .05);
 }
 
 
@@ -2994,6 +3013,13 @@ double Ship::ReverseAcceleration() const
 double Ship::MaxReverseVelocity() const
 {
 	return attributes.Get("reverse thrust") / Drag();
+}
+
+
+
+double Ship::CurrentSpeed() const
+{
+	return Velocity().Length();
 }
 
 

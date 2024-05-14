@@ -27,6 +27,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Planet.h"
 #include "PlayerInfo.h"
 #include "Random.h"
+#include "Ship.h"
 #include "SpriteSet.h"
 
 #include <algorithm>
@@ -547,6 +548,15 @@ void System::UpdateSystem(const Set<System> &systems, const set<double> &neighbo
 
 
 
+void System::UpdateObjectVisibilities(const Ship *flagship)
+{
+	if(flagship)
+		for(auto &object : objects)
+			object.UpdateDistanceVisibility(flagship);
+}
+
+
+
 // Modify a system's links.
 void System::Link(System *other)
 {
@@ -1056,6 +1066,21 @@ void System::LoadObjectHelper(const DataNode &node, StellarObject &object, bool 
 		object.speed = 360. / node.Value(1);
 	else if(key == "offset" && hasValue)
 		object.offset = node.Value(1);
+	else if(key == "visibility" && hasValue)
+	{
+		object.trueDistanceInvisible = node.Value(1);
+		if(node.Size() >= 3)
+			object.trueDistanceVisible = node.Value(2);
+		for(const auto &child : node)
+		{
+			if(child.Token(0) == "clearer" && child.Size() >= 2)
+				object.distanceVisibilityClearers.insert(child.Token(1));
+			else if(child.Token(0) == "multiplier" && child.Size() >= 2)
+				object.distanceVisibilityMultipliers.insert(child.Token(1));
+			else if(child.Token(0) == "adder" && child.Size() >= 2)
+				object.distanceVisibilityAdders.insert(child.Token(1));
+		}
+	}
 	else if(removing && (key == "hazard" || key == "object"))
 		node.PrintTrace("Key \"" + key + "\" cannot be removed from an object:");
 	else

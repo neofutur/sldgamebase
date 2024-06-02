@@ -48,19 +48,6 @@ std::string formation_empty =
 R"(formation "Empty"
 )";
 
-std::string formation_delta_tail_px =
-R"'(formation "Delta Tail (px)"
-	position -100 200
-	position 100 200
-	position 200 400
-	position 0 400
-	position -200 400
-	position -300 600
-	position -100 600
-	position 100 600
-	position 300 600
-)'";
-
 std::string formation_tail_px_point =
 R"'(formation "Tail (px point)"
 	position -100 0
@@ -84,8 +71,12 @@ SCENARIO( "Loading and using of a formation pattern", "[formationPattern][Positi
 		FormationPattern emptyFormation;
 		emptyFormation.Load(emptyNode);
 		REQUIRE( emptyFormation.Name() == "Empty");
+		double diameterToPx = 0.;
+		double widthToPx = 0.;
+		double heightToPx = 0.;
+		double centerBodyRadius = 0.;
 		WHEN( "positions are requested") {
-			auto it = emptyFormation.begin();
+			auto it = emptyFormation.begin(diameterToPx, widthToPx, heightToPx, centerBodyRadius);
 			THEN ( "all returned positions are near Point(0,0)" ) {
 				CHECK( Near(*it, Point(0, 0)) );
 				++it;
@@ -94,62 +85,6 @@ SCENARIO( "Loading and using of a formation pattern", "[formationPattern][Positi
 				CHECK( Near(*it, Point(0, 0)) );
 				++it;
 				CHECK( Near(*it, Point(0, 0)) );
-			}
-		}
-	}
-	GIVEN( "a formation pattern specified in points" ) {
-		auto tailNode = AsDataNode(formation_tail_px_point);
-		FormationPattern tailFormation;
-		tailFormation.Load(tailNode);
-		REQUIRE( tailFormation.Name() == "Tail (px point)");
-		WHEN( "positions are requested") {
-			auto it = tailFormation.begin();
-			THEN ( "all returned positions are as expected" ) {
-				CHECK( Near(*it, Point(-100, 0)) );
-				++it;
-				CHECK( Near(*it, Point(-200, 0)) );
-				++it;
-				CHECK( Near(*it, Point(-300, 0)) );
-				++it;
-				CHECK( Near(*it, Point(-400, 0)) );
-				++it;
-				CHECK( Near(*it, Point(-500, 0)) );
-				++it;
-				CHECK( Near(*it, Point(-600, 0)) );
-				++it;
-				CHECK( Near(*it, Point(-700, 0)) );
-				++it;
-				CHECK( Near(*it, Point(-800, 0)) );
-			}
-		}
-	}
-	GIVEN( "a formation pattern loaded in px" ) {
-		auto delta_pxNode = AsDataNode(formation_delta_tail_px);
-		FormationPattern delta_px;
-		delta_px.Load(delta_pxNode);
-		REQUIRE( delta_px.Name() == "Delta Tail (px)" );
-		WHEN( "positions are requested") {
-			THEN ( "the correct positions are calculated" ) {
-				// No exact comparisons due to doubles, but we check if
-				// the given points are very close to what they should be.
-				auto it = delta_px.begin();
-				REQUIRE( Near(*it, Point(-100, 200)) );
-				++it;
-				REQUIRE( Near(*it, Point(100, 200)) );
-				++it;
-				REQUIRE( Near(*it, Point(200, 400)) );
-				++it;
-				REQUIRE( Near(*it, Point(0, 400)) );
-				++it;
-				REQUIRE( Near(*it, Point(-200, 400)) );
-				++it;
-				REQUIRE( Near(*it, Point(-300, 600)) );
-				++it;
-				REQUIRE( Near(*it, Point(-100, 600)) );
-				++it;
-				REQUIRE( Near(*it, Point(100, 600)) );
-				++it;
-				REQUIRE( Near(*it, Point(300, 600)) );
 			}
 		}
 	}

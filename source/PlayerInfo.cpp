@@ -2320,7 +2320,14 @@ map<string, string> PlayerInfo::GetSubstitutions() const
 {
 	map<string, string> subs;
 	GameData::GetTextReplacements().Substitutions(subs, Conditions());
+	AddPlayerSubstitutions(subs);
+	return subs;
+}
 
+
+
+void PlayerInfo::AddPlayerSubstitutions(map<string, string> &subs) const
+{
 	subs["<first>"] = FirstName();
 	subs["<last>"] = LastName();
 	if(Flagship())
@@ -2329,7 +2336,6 @@ map<string, string> PlayerInfo::GetSubstitutions() const
 	subs["<system>"] = GetSystem()->Name();
 	subs["<date>"] = GetDate().ToString();
 	subs["<day>"] = GetDate().LongString();
-	return subs;
 }
 
 

@@ -19,17 +19,23 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Panel.h"
 
 #include "ClickZone.h"
-#include "Command.h"
+#include "Plugins.h"
 #include "Point.h"
 #include "ScrollVar.h"
+#include "TaskQueue.h"
 #include "text/WrappedText.h"
+
+#include <future>
+#include <nlohmann/json.hpp>
 
 #include <memory>
 #include <string>
 #include <vector>
 
-class RenderBuffer;
+class Command;
 struct Plugin;
+class Sprite;
+class RenderBuffer;
 
 
 
@@ -41,6 +47,7 @@ public:
 
 	// Draw this panel.
 	virtual void Draw() override;
+	virtual void Step() override;
 
 
 protected:
@@ -58,8 +65,9 @@ private:
 	void DrawControls();
 	void DrawSettings();
 	void DrawPlugins();
+	void DrawPluginInstalls();
 	void RenderPluginDescription(const std::string &pluginName);
-	void RenderPluginDescription(const Plugin &plugin);
+	void RenderPluginDescription(const Sprite *sprite, const std::string &description);
 
 	void DrawTooltips();
 
@@ -71,6 +79,7 @@ private:
 	void HandleDown();
 	void HandleConfirm();
 
+	void ProcessPluginIndex();
 	// Scroll the plugin list until the selected plugin is visible.
 	void ScrollSelectedPlugin();
 
@@ -97,9 +106,25 @@ private:
 
 	std::string selectedPlugin;
 
+	Plugins::InstallData *latestPlugin = nullptr;
+
+	Plugins::InstallData *selecPluginInstall = nullptr;
+	Plugins::InstallData *oldSelecPluginInstall = nullptr;
+	Plugins::InstallData *clickedPluginInstall = nullptr;
+	Plugins::InstallData *oldClickedPluginInstall = nullptr;
+	Plugins::InstallData *hoverPluginInstall = nullptr;
+	unsigned pluginInstallPages = 1;
+	unsigned currentPluginInstallPage = 0;
+	bool downloadedInfo = false;
+	std::vector<std::future<void>> installFeedbacks;
+	std::vector<Plugins::InstallData> pluginInstallData;
+	TaskQueue queue;
+	Set<Sprite> icons;
+
 	std::vector<ClickZone<Command>> zones;
 	std::vector<ClickZone<std::string>> prefZones;
 	std::vector<ClickZone<std::string>> pluginZones;
+	std::vector<ClickZone<Plugins::InstallData*>> pluginInstallZones;
 
 	std::unique_ptr<RenderBuffer> pluginListClip;
 	std::unique_ptr<RenderBuffer> pluginDescriptionBuffer;

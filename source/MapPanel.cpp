@@ -1378,11 +1378,10 @@ void MapPanel::DrawSystems()
 	if(commodity != cachedCommodity)
 		UpdateCache();
 
-	// If coloring by government, we need to keep track of which ones are the
-	// closest to the center of the window because those will be the ones that
-	// are shown in the map key.
+	// If coloring by government, we need to keep track of which ones are
+	// most prevalent.
 	if(commodity == SHOW_GOVERNMENT)
-		closeGovernments.clear();
+		bigGovernments.clear();
 
 	// Draw the circles for the systems.
 	double zoom = Zoom();
@@ -1391,17 +1390,15 @@ void MapPanel::DrawSystems()
 		Point pos = zoom * (node.position + center);
 		RingShader::Draw(pos, OUTER, INNER, node.color);
 
-		if(commodity == SHOW_GOVERNMENT && node.government && node.government->GetName() != "Uninhabited")
+		// Count the system for the government (to chose what goverment labels to display)
+		// Make sure that it is in an oval that is stretched to fit in the centers of all the edges
+		// before counting it
+		if(commodity == SHOW_GOVERNMENT && node.government && node.government->GetName() != "Uninhabited" &&
+			(pos * (1 / Screen::BottomRight())).LengthSquared() < 1)
 		{
-			// For every government that is drawn, keep track of how close it
-			// is to the center of the view. The four closest governments
-			// will be displayed in the key.
-			double distance = pos.Length();
-			auto it = closeGovernments.find(node.government);
-			if(it == closeGovernments.end())
-				closeGovernments[node.government] = distance;
-			else
-				it->second = min(it->second, distance);
+
+			// Count the number of occurences of each government.
+			bigGovernments[node.government]++;
 		}
 	}
 }
